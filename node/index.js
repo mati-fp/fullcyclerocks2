@@ -10,13 +10,21 @@ const config = {
 const mysql = require('mysql')
 const connection = mysql.createConnection(config)
 
-const sql = `INSERT INTO people(name) values('Mateus')`;
-connection.query(sql);
-connection.end();
-
 app.get('/', (req, res) => {
-    res.send('<h1>Full Cycle</h1>')
-})
+    const sql = `INSERT INTO people(name) values('Mateus')`;
+    connection.query(sql);
+
+    connection.query('SELECT * FROM people', function (error, results, fields) {
+        if (error) throw error;
+
+        let html = '<h1>Full Cycle</h1>';
+        results.forEach(person => {
+            html += `<h2>ID: ${person.id}  Name: ${person.name}</h2>`;
+        });
+        res.send(html);
+    });
+});
+
 
 app.listen(port, () => {
     console.log('rodando na porta '+ port)
